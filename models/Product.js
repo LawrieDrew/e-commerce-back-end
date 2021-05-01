@@ -12,8 +12,7 @@ Product.init(
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-
-    }, 
+  }, 
     
     product_name: {
     type: DataTypes.STRING,
@@ -25,7 +24,23 @@ Product.init(
       validate: {
         isDecimal: true,
       }
-    }
+    },
+    stock: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 10,
+      validate: {
+        isNumeric: true
+      }
+    },
+    category_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        // This references the `driver` model, which we set in `Driver.js` as its `modelName` property
+        model: 'category',
+        key: 'id',
+      },
+    },
   {
     sequelize,
     timestamps: false,
