@@ -53,33 +53,14 @@ router.get('/:id', (req, res) => {
 });
 
 // create new product
-router.post('/', async (req, res) => {
-  try {
-    const productData = await Product.create({
-      product_name: req.body.product_name,
-      price: req.body.price,
-      stock: req.body.stock,
-      tagIds: req.body.tagIds,
-    })
-    if (req.body.tagIds.length) {
-      const productTagIdArr = req.body.tagIds.map((tag_id) => {
-        return {
-          product_id: product.id,
-          tag_id,
-        };
-      });
-      let ProductTag = ProductTag.bulkCreate(productTagIdArr);
-      res.status(200).json(productTagIdArr);
-    } else {
-      res.status(200).json(productData)
-    } 
-    catch (err) {
-      console.log(err);
-      res.status(500).json(err);
-    };
-   });
-
-  Product.create(req.body)
+router.post('/', (req, res) => {
+  Product.create({
+        product_name: req.body.product_name,
+        price: req.body.price,
+        stock: req.body.stock,
+        category_id: req.body.category_id,
+        tagIds: req.body.tagIds,
+      })
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
@@ -108,8 +89,7 @@ router.post('/', async (req, res) => {
       where: {
         id: req.params.id,
       },
-    })
-      .then((product) => {
+    }).then((product) => {
         // find all associated tags from ProductTag
         return ProductTag.findAll({ where: { product_id: req.params.id } });
       })
@@ -145,6 +125,23 @@ router.post('/', async (req, res) => {
 
   router.delete('/:id', (req, res) => {
     // delete one product by its `id` value
+    Product.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    .then(dbProductData => {
+      if (!dbProductData) {
+        res.status(404).json({message: 'Product with this id not found'});
+        return;
+      }
+      res.json(dbProductData);
+    })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+
   });
 
   module.exports = router;
