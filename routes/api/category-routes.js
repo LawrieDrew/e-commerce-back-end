@@ -42,7 +42,7 @@ router.get('/:id', (req, res) => {
 });
 
 // CREATE a Category
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
   Category.create({
     category_name: req.body.category_name
   })
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     });
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', (req, res) => {
 Category.update(req.body, {
   where: {
     id: req.params.id
